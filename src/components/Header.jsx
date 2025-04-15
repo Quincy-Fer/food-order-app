@@ -9,6 +9,7 @@ const Header = () => {
   const totalItems = cartCtx.items.reduce((totalNumber, item) => {
     return totalNumber + item.quantity;
   }, 0);
+  
   return (
     <header id="main-header">
       <div id="title">
