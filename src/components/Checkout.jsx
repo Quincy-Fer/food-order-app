@@ -16,11 +16,11 @@ const Checkout = () => {
   );
   
   function handleClose(){
-    userProgressCtx.hideCheckout()
+    userProgressCtx.hideCheckout()  
   }
 
   return (
-    <Modal open={userProgressCtx.progress === "checkout"}>
+    <Modal open={userProgressCtx.progress === "checkout"} onClose={handleClose}>
       <form>
         <h2>Checkout</h2>
         <p>Total Amount: {currencyFormatter.format(cartTotal)} </p>
