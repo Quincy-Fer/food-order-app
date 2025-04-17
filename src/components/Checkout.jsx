@@ -1,18 +1,18 @@
-import { useContext } from 'react';
+import { useContext, useActionState } from "react";
 
-import Modal from './Modal.jsx';
-import CartContext from '../store/CartContext.jsx';
-import { currencyFormatter } from '../util/formatting.js';
-import Input from './Input.jsx';
-import Button from './Button.jsx';
-import UserProgressContext from '../store/UserProgressContext.jsx';
-import useHttp from '../util/useHttp.js';
-import Error from './Error.jsx';
+import Modal from "./Modal.jsx";
+import CartContext from "../store/CartContext.jsx";
+import { currencyFormatter } from "../util/formatting.js";
+import Input from "./Input.jsx";
+import Button from "./Button.jsx";
+import UserProgressContext from "../store/UserProgressContext.jsx";
+import useHttp from "../util/useHttp.js";
+import Error from "./Error.jsx";
 
 const requestConfig = {
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 };
 
@@ -20,13 +20,10 @@ export default function Checkout() {
   const cartCtx = useContext(CartContext);
   const userProgressCtx = useContext(UserProgressContext);
 
-  const {
-    data,
-    isLoading: isSending,
-    error,
-    sendRequest,
-    clearData
-  } = useHttp('http://localhost:3000/orders', requestConfig);
+  const { data, error, sendRequest, clearData } = useHttp(
+    "http://localhost:3000/orders",
+    requestConfig
+  );
 
   const cartTotal = cartCtx.items.reduce(
     (totalPrice, item) => totalPrice + item.quantity * item.price,
@@ -43,21 +40,21 @@ export default function Checkout() {
     clearData();
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  async function checkoutAction(prevState, fd) {
+    const customerData = Object.fromEntries(fd.entries());
 
-    const fd = new FormData(event.target);
-    const customerData = Object.fromEntries(fd.entries()); // { email: test@example.com }
-
-    sendRequest(
-      JSON.stringify({
-        order: {
-          items: cartCtx.items,
-          customer: customerData,
-        },
-      })
-    );
+    await sendRequest({
+      order: {
+        items: cartCtx.items,
+        customer: customerData,
+      },
+    });
   }
+
+  const [formState, formAction, isSending] = useActionState(
+    checkoutAction,
+    null
+  );
 
   let actions = (
     <>
@@ -75,7 +72,7 @@ export default function Checkout() {
   if (data && !error) {
     return (
       <Modal
-        open={userProgressCtx.progress === 'checkout'}
+        open={userProgressCtx.progress === "checkout"}
         onClose={handleFinish}
       >
         <h2>Success!</h2>
@@ -92,8 +89,8 @@ export default function Checkout() {
   }
 
   return (
-    <Modal open={userProgressCtx.progress === 'checkout'} onClose={handleClose}>
-      <form onSubmit={handleSubmit}>
+    <Modal open={userProgressCtx.progress === "checkout"} onClose={handleClose}>
+      <form method="post" action={formAction}>
         <h2>Checkout</h2>
         <p>Total Amount: {currencyFormatter.format(cartTotal)}</p>
 
