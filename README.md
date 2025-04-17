@@ -6,7 +6,7 @@ This simple app allows you to add food orders to a cart and allows you to order 
 
 The app allowed me to familiarize myself more with: \
 
-1. REST API's and https request  
+1. REST API's and http requests  
 2. Context API to create a global store: allowing CART interactions and Modal forms.  
 3. Custom Hooks  
 4. Hooks such as useContext, useCallBack, useActionState, useEffect etc.  
