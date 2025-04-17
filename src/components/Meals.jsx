@@ -1,22 +1,27 @@
-import { useEffect, useState } from "react";
-import MealItem from "./MealItem";
+import MealItem from './MealItem.jsx';
+import useHttp from '../util/useHttp.js';
+import Error from './Error.jsx';
 
-const Meals = () => {
-  const [loadedMeals, setLoadedMeals] = useState([]);
+const requestConfig = {};
 
-  useEffect(() => {
-    async function fetchMeals() {
-      const response = await fetch("http://localhost:3000/meals");
+export default function Meals() {
+  const {
+    data: loadedMeals,
+    isLoading,
+    error,
+  } = useHttp('http://localhost:3000/meals', requestConfig, []);
 
-      if (!response.ok) {
-        // Handle error
-      }
+  if (isLoading) {
+    return <p className="center">Fetching meals...</p>;
+  }
 
-      const mealsData = await response.json();
-      setLoadedMeals(mealsData);
-    }
-    fetchMeals();
-  }, []);
+  if (error) {
+    return <Error title="Failed to fetch meals" message={error} />;
+  }
+
+  // if (!data) {
+  //   return <p>No meals found.</p>
+  // }
 
   return (
     <ul id="meals">
@@ -25,6 +30,4 @@ const Meals = () => {
       ))}
     </ul>
   );
-};
-
-export default Meals;
+}
