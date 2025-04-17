@@ -1,3 +1,4 @@
+
 import { currencyFormatter } from '../util/formatting.js';
 
 export default function CartItem({
